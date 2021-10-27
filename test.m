@@ -1,0 +1,2 @@
+c=None;
+simpletron(c);
