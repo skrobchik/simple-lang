@@ -1,5 +1,5 @@
 from syntax_tree_types import *
-from typing import Dict, List
+from typing import Dict, List, get_args
 from simpletron_instruction_types import Instruction, InstructionType
 
 def load_number(variables, constants, number, instruction_type=InstructionType.LOAD) -> List[Instruction]:
@@ -26,9 +26,9 @@ def load_number(variables, constants, number, instruction_type=InstructionType.L
 
 def evaluate_expression(variables: Dict[str, int], constants: Dict[int, int], expression: Expression) -> List[Instruction]:
     output = []
-    if type(expression) == Number:
+    if type(expression) in get_args(Number):
         output.extend(load_number(variables, constants, expression))
-    elif type(expression) == BinaryOperation:
+    elif type(expression) in get_args(BinaryOperation):
         output.extend(load_number(variables, constants, expression.left))
         operation_type_instructions = {
             Addition: InstructionType.ADDITION,
@@ -54,13 +54,13 @@ def compile_syntax_tree(program: Program) -> List[int]:
     for statement in program:
         if type(statement) == VariableWrite:
             instructions.extend(evaluate_expression(variables, constants, statement.expression))
-            if statement.vairable_name not in variables:
+            if statement.variable_name not in variables:
                 variables[statement.variable_name] = len(variables)
             instructions.append(Instruction(
                     instruction_type=InstructionType.SAVE,
                     target_address=variables[statement.variable_name]
             ))
-        if type(statement) == Print:
+        elif type(statement) == Print:
             instructions.extend(evaluate_expression(variables, constants, statement.expression))
             instructions.append(Instruction(
                 instruction_type=InstructionType.SAVE,
@@ -70,11 +70,14 @@ def compile_syntax_tree(program: Program) -> List[int]:
                 instruction_type=InstructionType.PRINT,
                 target_address=variables['PRINT_BUFFER']
             ))
-        if type(statement) == Read:
+        elif type(statement) == Read:
             instructions.append(Instruction(
                 instruction_type=InstructionType.INPUT,
                 target_address=variables[statement.variable_name]
             ))
+        else:
+            print("Error! Statement type not supported")
+            exit()
 
     output = []
     variable_address_shift = len(instructions)+1
