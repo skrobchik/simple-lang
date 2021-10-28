@@ -46,7 +46,7 @@ class Print:
 
 @dataclass
 class Read:
-    vairable_name: str
+    variable_name: str
 
 Statement = Union[VariableWrite, Print, Read]
 
