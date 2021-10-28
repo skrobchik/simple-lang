@@ -27,13 +27,13 @@ def parse_expression(tokens: List[Token], line_num=None) -> Expression:
             print("Invalid expression!", line_error_string)
             exit()
         if tokens[1] == OperatorToken.ADDITION:
-            return Addition(left=parse_number(tokens[0]), right=parse_number(tokens[1]))
+            return Addition(left=parse_number(tokens[0]), right=parse_number(tokens[2]))
         if tokens[1] == OperatorToken.SUBSTRACTION:
-            return Substraction(left=parse_number(tokens[0]), right=parse_number(tokens[1]))
+            return Substraction(left=parse_number(tokens[0]), right=parse_number(tokens[2]))
         if tokens[1] == OperatorToken.MULTIPLICATION:
-            return Multiplication(left=parse_number(tokens[0]), right=parse_number(tokens[1]))
+            return Multiplication(left=parse_number(tokens[0]), right=parse_number(tokens[2]))
         if tokens[1] == OperatorToken.DIVISION:
-            return Division(left=parse_number(tokens[0]), right=parse_number(tokens[1]))
+            return Division(left=parse_number(tokens[0]), right=parse_number(tokens[2]))
         
     pass
 
