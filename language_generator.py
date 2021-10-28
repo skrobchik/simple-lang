@@ -1,6 +1,18 @@
+from enum import Enum
 from syntax_tree_types import *
 from typing import Dict, List, get_args
-from simpletron_instruction_types import Instruction, InstructionType
+from simpletron_instruction_types import InstructionType
+
+@dataclass
+class MemoryAddress:
+    memory_space_name: str
+    index: int
+
+@dataclass
+class Instruction:
+    instruction_type: InstructionType
+    target_address: MemoryAddress
+
 
 def load_number(variables, constants, number, instruction_type=InstructionType.LOAD) -> List[Instruction]:
     output = []
@@ -10,14 +22,18 @@ def load_number(variables, constants, number, instruction_type=InstructionType.L
             exit()
         output.append(Instruction(
             instruction_type=instruction_type,
-            target_address=variables[number.variable_name]
+            target_address=MemoryAddress(
+                'VARIABLES', variables[number.variable_name]
+            )
         ))
     elif type(number) == Constant:
         if number.value not in constants:
             constants[number.value] = len(constants)
         output.append(Instruction(
             instruction_type=instruction_type,
-            target_address=constants[number.value]
+            target_address=MemoryAddress(
+                'CONSTANTS', constants[number.value]
+            )
         ))
     else:
         print("Error! Number type not supported.")
@@ -58,29 +74,53 @@ def compile_syntax_tree(program: Program) -> List[int]:
                 variables[statement.variable_name] = len(variables)
             instructions.append(Instruction(
                     instruction_type=InstructionType.SAVE,
-                    target_address=variables[statement.variable_name]
+                    target_address=MemoryAddress(
+                        'VARIABLES', variables[statement.variable_name]
+                    )
             ))
         elif type(statement) == Print:
             instructions.extend(evaluate_expression(variables, constants, statement.expression))
             instructions.append(Instruction(
                 instruction_type=InstructionType.SAVE,
-                target_address=variables['PRINT_BUFFER']
+                target_address=MemoryAddress(
+                    'VARIABLES', variables['PRINT_BUFFER']
+                )
             ))
             instructions.append(Instruction(
                 instruction_type=InstructionType.PRINT,
-                target_address=variables['PRINT_BUFFER']
+                target_address=MemoryAddress(
+                    'VARIABLES', variables['PRINT_BUFFER']
+                )
             ))
         elif type(statement) == Read:
+            if statement.variable_name not in variables:
+                variables[statement.variable_name] = len(variables)
             instructions.append(Instruction(
                 instruction_type=InstructionType.INPUT,
-                target_address=variables[statement.variable_name]
+                target_address=MemoryAddress(
+                    'VARIABLES', variables[statement.variable_name]
+                )
             ))
         else:
             print("Error! Statement type not supported")
             exit()
+    instructions.append(Instruction(instruction_type=InstructionType.END_OF_PROGRAM, target_address=MemoryAddress('',0)))
 
     output = []
-    variable_address_shift = len(instructions)+1
+    variable_address_start = len(instructions)
+    constants_address_start = variable_address_start+len(variables)
     for instruction in instructions:
-        output.append(int(f'{instruction.instruction_type.value}{instruction.target_address+variable_address_shift}'))
+        real_memory_address = instruction.target_address.index
+        if instruction.target_address.memory_space_name == 'VARIABLES':
+            real_memory_address += variable_address_start
+        elif instruction.target_address.memory_space_name == 'CONSTANTS':
+            real_memory_address += constants_address_start
+        output.append(int(f'{instruction.instruction_type.value}{(real_memory_address+1):02}'))
+
+    output.extend([0]*(len(variables)+len(constants)))
+    
+    for constant_value, index in constants.items():
+        real_memory_address = index + constants_address_start
+        output[real_memory_address] = constant_value
+
     return output

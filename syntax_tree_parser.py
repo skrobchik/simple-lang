@@ -45,9 +45,10 @@ def parse_program(token_lines: List[List[Token]]) -> Program:
                 tokens[1:], line_num=line_number
             )))
         if tokens[0] == KeywordToken.READ:
-            p.append(Read(parse_expression(
-                tokens[1:], line_num=line_number
-            )))
+            if type(tokens[1]) != IdentifierToken:
+                print("Error! Expected identifier. Line", line_number)
+                exit()
+            p.append(Read(tokens[1].variable_name))
         if type(tokens[0]) == IdentifierToken:
             if tokens[1] != OperatorToken.ASSIGNMENT:
                 print("Error! Expected assignment. Line", line_number)

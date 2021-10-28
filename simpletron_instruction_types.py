@@ -14,8 +14,3 @@ class InstructionType(Enum):
     CONDITIONAL_NEGATIVE_GOTO = 41 # Changes instruction pointer to specified address if acumulator is negative.
     CONDITIONAL_ZERO_GOTO = 42 # Changes instruction pointer to specified address if acumulator is zero.
     END_OF_PROGRAM = 43 # Terminates execution.
-
-@dataclass
-class Instruction:
-    instruction_type: InstructionType
-    target_address: int
