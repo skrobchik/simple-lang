@@ -11,6 +11,14 @@ def tokenize_line(line: str) -> List[Token]:
         if word == 'read':
             tokens.append(KeywordToken.READ)
             continue
+        if word == 'if':
+            tokens.append(KeywordToken.IF)
+            continue
+        if word == 'while':
+            tokens.append(KeywordToken.WHILE)
+            continue
+        if word == 'end':
+            tokens.append(KeywordToken.END)
 
         var_name = []
         constant_digits = []

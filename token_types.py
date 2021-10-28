@@ -5,6 +5,9 @@ from typing import Union
 class KeywordToken(Enum):
     PRINT = 1
     READ = 2
+    IF = 3
+    WHILE = 4
+    END = 5
 
 @dataclass
 class IdentifierToken:
