@@ -84,6 +84,17 @@ def _compile(program: List[Statement], variables, constants, program_start_addre
                 instruction_type=InstructionType.GOTO,
                 target_address=MemoryAddress('', while_start_address)
             ))
+        elif type(statement) == If:
+            eval_instructions = evaluate_expression(variables, constants, statement.expression)
+            if_start_address = program_start_address+len(instructions)
+            body_start_address = if_start_address+len(eval_instructions)+1
+            body_instructions = _compile(statement.body, variables, constants, body_start_address)
+            instructions.extend(eval_instructions)
+            instructions.append(Instruction(
+                instruction_type=InstructionType.CONDITIONAL_NEGATIVE_GOTO,
+                target_address=MemoryAddress('', body_start_address+len(body_instructions))
+            ))
+            instructions.extend(body_instructions)
         elif type(statement) == VariableWrite:
             instructions.extend(evaluate_expression(variables, constants, statement.expression))
             if statement.variable_name not in variables:
