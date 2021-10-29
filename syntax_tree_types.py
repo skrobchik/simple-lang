@@ -48,6 +48,20 @@ class Print:
 class Read:
     variable_name: str
 
-Statement = Union[VariableWrite, Print, Read]
+class If:
+    pass
 
-Program = List[Statement]
+class While:
+    pass
+
+Statement = Union[VariableWrite, Print, Read, If, While]
+
+@dataclass
+class If:
+    expression: Expression
+    body: List[Statement]
+
+@dataclass
+class While:
+    expression: Expression
+    body: List[Statement]

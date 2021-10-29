@@ -45,7 +45,6 @@ def evaluate_expression(variables: Dict[str, int], constants: Dict[int, int], ex
     if type(expression) in get_args(Number):
         output.extend(load_number(variables, constants, expression))
     elif type(expression) in get_args(BinaryOperation):
-        output.extend(load_number(variables, constants, expression.left))
         operation_type_instructions = {
             Addition: InstructionType.ADDITION,
             Substraction: InstructionType.SUBSTRACTION,
@@ -55,20 +54,37 @@ def evaluate_expression(variables: Dict[str, int], constants: Dict[int, int], ex
         if type(expression) not in operation_type_instructions:
             print("Error! Operation type not supported.")
             exit()
-        output.extend(load_number(variables, constants, expression.right, instruction_type=operation_type_instructions[type(expression)]))
+        if type(expression) == Division:
+            output.extend(load_number(variables, constants, expression.right))
+            output.extend(load_number(variables, constants, expression.left, instruction_type=InstructionType.DIVISION))
+        else:
+            output.extend(load_number(variables, constants, expression.left))
+            
+            output.extend(load_number(variables, constants, expression.right, instruction_type=operation_type_instructions[type(expression)]))
     else:
         print("Error! Expression type not supported.")
         exit()
     return output
 
-def compile_syntax_tree(program: Program) -> List[int]:
-    variables = {}
-    constants = {}
-    instructions: List[Instruction] = []
-
-    variables['PRINT_BUFFER'] = 0
+def _compile(program: List[Statement], variables, constants, program_start_address=0) -> List[int]:
+    instructions = []
     for statement in program:
-        if type(statement) == VariableWrite:
+        if type(statement) == While:
+            eval_instructions = evaluate_expression(variables, constants, statement.expression)
+            while_start_address = program_start_address+len(instructions)
+            body_start_address = while_start_address+len(eval_instructions)+1
+            body_instructions = _compile(statement.body, variables, constants, body_start_address)
+            instructions.extend(eval_instructions)
+            instructions.append(Instruction(
+                instruction_type=InstructionType.CONDITIONAL_NEGATIVE_GOTO,
+                target_address=MemoryAddress('', body_start_address+len(body_instructions)+1)
+            ))
+            instructions.extend(body_instructions)
+            instructions.append(Instruction(
+                instruction_type=InstructionType.GOTO,
+                target_address=MemoryAddress('', while_start_address)
+            ))
+        elif type(statement) == VariableWrite:
             instructions.extend(evaluate_expression(variables, constants, statement.expression))
             if statement.variable_name not in variables:
                 variables[statement.variable_name] = len(variables)
@@ -104,6 +120,16 @@ def compile_syntax_tree(program: Program) -> List[int]:
         else:
             print("Error! Statement type not supported")
             exit()
+    return instructions
+
+def compile_syntax_tree(program: List[Statement]) -> List[int]:
+    variables = {}
+    constants = {}
+
+    variables['PRINT_BUFFER'] = 0
+
+    instructions = _compile(program, variables, constants)
+    
     instructions.append(Instruction(instruction_type=InstructionType.END_OF_PROGRAM, target_address=MemoryAddress('',0)))
 
     output = []

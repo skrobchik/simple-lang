@@ -1,0 +1,3 @@
+read n
+i = 1
+while n - 1

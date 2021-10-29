@@ -7,4 +7,4 @@ with open(source_file_path, 'r') as source_file:
     characters = source_file.read()
 output = compile(characters)
 with open(output_file_path, 'w') as output_file:
-    output_file.write(f"c={str(output)};\nsimpletron(c);")
+    output_file.write(f"clear; clc;\nc={str(output)};\nsimpletron(c);")

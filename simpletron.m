@@ -15,49 +15,49 @@ while nDLinea<100
     
     switch instrux
         case 10
-            disp(['entrada de teclado y guarda en  memoria ' num2str(nEspDM)]);
+            %disp(['entrada de teclado y guarda en  memoria ' num2str(nEspDM)]);
             codigo(nEspDM)=input('\nSimpletron necesita valor\n');
             nDLinea=nDLinea+incr;
         case 11
-            disp(['imprime contenido memoria ' num2str(nEspDM)]);
+            %disp(['imprime contenido memoria ' num2str(nEspDM)]);
             disp(codigo(nEspDM));
             nDLinea=nDLinea+incr;
         case 20
-            disp(['carga a acumulador contenido memoria ' num2str(nEspDM)]);
+            %disp(['carga a acumulador contenido memoria ' num2str(nEspDM)]);
             acumulador=codigo(nEspDM);
             nDLinea=nDLinea+incr;
         case 21
-            disp(['almacena acumulador en memoria ' num2str(nEspDM)]);
+            %disp(['almacena acumulador en memoria ' num2str(nEspDM)]);
             codigo(nEspDM)=acumulador;
             nDLinea=nDLinea+incr;
         case 30
-            disp(['suma contenido memoria ' num2str(nEspDM) ' a acumulador']);
-            acumulador=acumulador+codigo(nEspDM)
+            %disp(['suma contenido memoria ' num2str(nEspDM) ' a acumulador']);
+            acumulador=acumulador+codigo(nEspDM);
             nDLinea=nDLinea+incr;
         case 31
-            disp(['resta contenido memoria ' num2str(nEspDM) ' a acumulador']);
-            acumulador=acumulador-codigo(nEspDM)
+            %disp(['resta contenido memoria ' num2str(nEspDM) ' a acumulador']);
+            acumulador=acumulador-codigo(nEspDM);
             nDLinea=nDLinea+incr;
         case 32
-            disp(['divide contenido memoria ' num2str(nEspDM) ' entre acumulador']);
+            %disp(['divide contenido memoria ' num2str(nEspDM) ' entre acumulador']);
             acumulador=codigo(nEspDM)/acumulador;  %acumulador/codigo(nEspDM);
             nDLinea=nDLinea+incr;
         case 33
-            disp(['multiplica contenido memoria ' num2str(nEspDM) ' a acumulador']);
+            %disp(['multiplica contenido memoria ' num2str(nEspDM) ' a acumulador']);
             acumulador=acumulador*codigo(nEspDM);
             nDLinea=nDLinea+incr;
         case 40
-            disp(['bifurca a ' num2str(nEspDM)]);
+            %disp(['bifurca a ' num2str(nEspDM)]);
             nDLinea=nEspDM;
         case 41
-            disp(['bifurca a ' num2str(nEspDM) ' si negativo']);
+            %disp(['bifurca a ' num2str(nEspDM) ' si negativo']);
             if acumulador<0
                 nDLinea=nEspDM;
             else
                 nDLinea=nDLinea+incr;
             end
         case 42
-            disp(['bifurca a ' num2str(nEspDM) ' si cero']);
+            %disp(['bifurca a ' num2str(nEspDM) ' si cero']);
             if acumulador==0
                 nDLinea=nEspDM;
             else
