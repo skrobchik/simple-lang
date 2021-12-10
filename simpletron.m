@@ -1,4 +1,4 @@
-function simpletron (codigo)
+function out=simpletron (codigo)
 %codigo es un arreglo de 100 = instrucciones y memoria de maquina
 %acumulador es variable de sistema
 %nDLinea es contador de lineas
@@ -71,3 +71,4 @@ while nDLinea<100
             break
     end
 end
+out=codigo; 

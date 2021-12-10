@@ -23,19 +23,18 @@ def parse_expression(tokens: List[Token], line_num=None) -> Expression:
         if type(tokens[0]) not in {ConstantToken, IdentifierToken} or type(tokens[1]) != OperatorToken or type(tokens[2]) not in {ConstantToken, IdentifierToken}:
             print("Invalid expression!", line_error_string)
             exit()
-        match tokens[1]:
-            case OperatorToken.ADDITION:
-                return Addition(left=parse_number(tokens[0]), right=parse_number(tokens[2]))
-            case OperatorToken.SUBSTRACTION:
-                return Substraction(left=parse_number(tokens[0]), right=parse_number(tokens[2]))
-            case OperatorToken.MULTIPLICATION:
-                return Multiplication(left=parse_number(tokens[0]), right=parse_number(tokens[2]))
-            case OperatorToken.DIVISION:
-                return Division(left=parse_number(tokens[0]), right=parse_number(tokens[2]))
+        if tokens[1] == OperatorToken.ADDITION:
+            return Addition(left=parse_number(tokens[0]), right=parse_number(tokens[2]))
+        if tokens[1] == OperatorToken.SUBSTRACTION:
+            return Substraction(left=parse_number(tokens[0]), right=parse_number(tokens[2]))
+        if tokens[1] == OperatorToken.MULTIPLICATION:
+            return Multiplication(left=parse_number(tokens[0]), right=parse_number(tokens[2]))
+        if tokens[1] == OperatorToken.DIVISION:
+            return Division(left=parse_number(tokens[0]), right=parse_number(tokens[2]))
         
     pass
 
-def parse_program(token_lines: deque[List[Token]], start_line=1) -> List[Statement]:
+def parse_program(token_lines: 'deque[List[Token]]', start_line=1) -> List[Statement]:
     p = list()
     line_number = start_line
     while len(token_lines) > 0:
